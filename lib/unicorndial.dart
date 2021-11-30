@@ -61,7 +61,7 @@ class UnicornButton extends FloatingActionButton {
 
 class UnicornDialer extends StatefulWidget {
   final int orientation;
-  final Widget parentButton;
+  final Icon parentButton;
   final Icon? finalButtonIcon;
   final bool hasBackground;
   final Color? parentButtonBackground;
@@ -73,6 +73,7 @@ class UnicornDialer extends StatefulWidget {
   final Function? onMainButtonPressed;
   final Object parentHeroTag;
   final bool hasNotch;
+  final BoxDecoration mainButtonDecoration;
 
   UnicornDialer(
       {required this.parentButton,
@@ -87,7 +88,8 @@ class UnicornDialer extends StatefulWidget {
       this.animationDuration = 180,
       this.mainAnimationDuration = 200,
       this.childPadding = 4.0,
-      this.hasNotch = false});
+      this.hasNotch = false,
+      this.mainButtonDecoration = const BoxDecoration()});
 
   _UnicornDialer createState() => _UnicornDialer();
 }
@@ -152,38 +154,42 @@ class _UnicornDialer extends State<UnicornDialer>
     var mainFAB = AnimatedBuilder(
         animation: this._parentController,
         builder: (BuildContext context, Widget? child) {
-          return Transform(
-              transform: new Matrix4.diagonal3(vector.Vector3(
-                  _parentController.value,
-                  _parentController.value,
-                  _parentController.value)),
-              alignment: FractionalOffset.center,
-              child: FloatingActionButton(
-                  isExtended: false,
-                  heroTag: widget.parentHeroTag,
-                  backgroundColor: widget.parentButtonBackground,
-                  onPressed: () {
-                    mainActionButtonOnPressed();
-                    if (widget.onMainButtonPressed != null) {
-                      widget.onMainButtonPressed!();
-                    }
-                  },
-                  child: !hasChildButtons
-                      ? widget.parentButton
-                      : AnimatedBuilder(
-                          animation: this._animationController,
-                          builder: (BuildContext context, Widget? child) {
-                            return Transform(
-                              transform: new Matrix4.rotationZ(
-                                  this._animationController.value * 0.8),
-                              alignment: FractionalOffset.center,
-                              child: (this._animationController.isDismissed
-                                  ? widget.parentButton
-                                  : widget.finalButtonIcon == null
-                                      ? Icon(Icons.close)
-                                      : Icon(widget.finalButtonIcon!.icon)),
-                            );
-                          })));
+          return DecoratedBox(
+            decoration: widget.mainButtonDecoration,
+            child: Transform(
+                transform: new Matrix4.diagonal3(vector.Vector3(
+                    _parentController.value,
+                    _parentController.value,
+                    _parentController.value)),
+                alignment: FractionalOffset.center,
+                child: FloatingActionButton(
+                    isExtended: false,
+                    heroTag: widget.parentHeroTag,
+                    backgroundColor: widget.parentButtonBackground,
+                    onPressed: () {
+                      mainActionButtonOnPressed();
+                      if (widget.onMainButtonPressed != null) {
+                        widget.onMainButtonPressed!();
+                      }
+                    },
+                    child: !hasChildButtons
+                        ? widget.parentButton
+                        : AnimatedBuilder(
+                            animation: this._animationController,
+                            builder: (BuildContext context, Widget? child) {
+                              return Transform(
+                                transform: new Matrix4.rotationZ(
+                                    this._animationController.value * 0.8),
+                                alignment: FractionalOffset.center,
+                                child:
+                                    new Icon(this._animationController.isDismissed
+                                        ? widget.parentButton.icon
+                                        : widget.finalButtonIcon == null
+                                            ? Icons.close
+                                            : widget.finalButtonIcon!.icon),
+                              );
+                            }))),
+          );
         });
 
     if (hasChildButtons) {
