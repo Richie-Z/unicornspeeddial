@@ -154,24 +154,26 @@ class _UnicornDialer extends State<UnicornDialer>
     var mainFAB = AnimatedBuilder(
         animation: this._parentController,
         builder: (BuildContext context, Widget? child) {
-          return DecoratedBox(
-            decoration: widget.mainButtonDecoration,
-            child: Transform(
-                transform: new Matrix4.diagonal3(vector.Vector3(
-                    _parentController.value,
-                    _parentController.value,
-                    _parentController.value)),
-                alignment: FractionalOffset.center,
-                child: FloatingActionButton(
-                    isExtended: false,
-                    heroTag: widget.parentHeroTag,
-                    backgroundColor: widget.parentButtonBackground,
-                    onPressed: () {
-                      mainActionButtonOnPressed();
-                      if (widget.onMainButtonPressed != null) {
-                        widget.onMainButtonPressed!();
-                      }
-                    },
+          return Transform(
+              transform: new Matrix4.diagonal3(vector.Vector3(
+                  _parentController.value,
+                  _parentController.value,
+                  _parentController.value)),
+              alignment: FractionalOffset.center,
+              child: FloatingActionButton(
+                  isExtended: false,
+                  heroTag: widget.parentHeroTag,
+                  backgroundColor: widget.parentButtonBackground,
+                  onPressed: () {
+                    mainActionButtonOnPressed();
+                    if (widget.onMainButtonPressed != null) {
+                      widget.onMainButtonPressed!();
+                    }
+                  },
+                  child: Container(
+                    decoration: widget.mainButtonDecoration,
+                    width: 60,
+                    height: 60,
                     child: !hasChildButtons
                         ? widget.parentButton
                         : AnimatedBuilder(
@@ -188,8 +190,8 @@ class _UnicornDialer extends State<UnicornDialer>
                                             ? Icons.close
                                             : widget.finalButtonIcon!.icon),
                               );
-                            }))),
-          );
+                            }),
+                  )));
         });
 
     if (hasChildButtons) {
