@@ -6,8 +6,9 @@ class UnicornOrientation {
   static const VERTICAL = 1;
 }
 
-class UnicornButton extends FloatingActionButton {
-  final FloatingActionButton currentButton;
+class UnicornButton extends StatelessWidget {
+  // Should Floating Action Button
+  final dynamic currentButton;
   final String? labelText;
   final double labelFontSize;
   final Color? labelColor;
@@ -16,46 +17,50 @@ class UnicornButton extends FloatingActionButton {
   final bool labelHasShadow;
   final bool hasLabel;
 
-  UnicornButton(
-      {required this.currentButton,
-      this.labelText,
-      this.labelFontSize = 14.0,
-      this.labelColor,
-      this.labelBackgroundColor,
-      this.labelShadowColor,
-      this.labelHasShadow = true,
-      this.hasLabel = false})
-      : super(onPressed: currentButton.onPressed);
+  UnicornButton({
+    required this.currentButton,
+    this.labelText,
+    this.labelFontSize = 14.0,
+    this.labelColor,
+    this.labelBackgroundColor,
+    this.labelShadowColor,
+    this.labelHasShadow = true,
+    this.hasLabel = false,
+  });
 
   Widget returnLabel() {
     return Container(
-        decoration: BoxDecoration(
-            boxShadow: this.labelHasShadow
-                ? [
-                    new BoxShadow(
-                      color: this.labelShadowColor == null
-                          ? Color.fromRGBO(204, 204, 204, 1.0)
-                          : this.labelShadowColor!,
-                      blurRadius: 3.0,
-                    ),
-                  ]
-                : null,
-            color: this.labelBackgroundColor == null
-                ? Colors.white
-                : this.labelBackgroundColor,
-            borderRadius: BorderRadius.circular(3.0)), //color: Colors.white,
-        padding: EdgeInsets.all(9.0),
-        child: Text(this.labelText!,
-            style: TextStyle(
-                fontSize: this.labelFontSize,
-                fontWeight: FontWeight.bold,
-                color: this.labelColor == null
-                    ? Color.fromRGBO(119, 119, 119, 1.0)
-                    : this.labelColor)));
+      decoration: BoxDecoration(
+        boxShadow: this.labelHasShadow
+            ? [
+                new BoxShadow(
+                  color: this.labelShadowColor == null
+                      ? Color.fromRGBO(204, 204, 204, 1.0)
+                      : this.labelShadowColor!,
+                  blurRadius: 3.0,
+                ),
+              ]
+            : null,
+        color: this.labelBackgroundColor == null
+            ? Colors.white
+            : this.labelBackgroundColor,
+        borderRadius: BorderRadius.circular(3.0),
+      ), //color: Colors.white,
+      padding: EdgeInsets.all(9.0),
+      child: Text(
+        this.labelText!,
+        style: TextStyle(
+            fontSize: this.labelFontSize,
+            fontWeight: FontWeight.bold,
+            color: this.labelColor == null
+                ? Color.fromRGBO(119, 119, 119, 1.0)
+                : this.labelColor),
+      ),
+    );
   }
 
   Widget build(BuildContext context) {
-    return this.currentButton;
+    return currentButton;
   }
 }
 
@@ -104,12 +109,14 @@ class _UnicornDialer extends State<UnicornDialer>
   @override
   void initState() {
     this._animationController = AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: widget.animationDuration));
+      vsync: this,
+      duration: Duration(milliseconds: widget.animationDuration),
+    );
 
     this._parentController = AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: widget.mainAnimationDuration));
+      vsync: this,
+      duration: Duration(milliseconds: widget.mainAnimationDuration),
+    );
 
     super.initState();
   }
@@ -152,70 +159,76 @@ class _UnicornDialer extends State<UnicornDialer>
     }
 
     var mainFAB = AnimatedBuilder(
-        animation: this._parentController,
-        builder: (BuildContext context, Widget? child) {
-          return Transform(
-              transform: new Matrix4.diagonal3(vector.Vector3(
-                  _parentController.value,
-                  _parentController.value,
-                  _parentController.value)),
-              alignment: FractionalOffset.center,
-              child: FloatingActionButton(
-                  isExtended: false,
-                  heroTag: widget.parentHeroTag,
-                  backgroundColor: widget.parentButtonBackground,
-                  onPressed: () {
-                    mainActionButtonOnPressed();
-                    if (widget.onMainButtonPressed != null) {
-                      widget.onMainButtonPressed!();
-                    }
-                  },
-                  child: Container(
-                    decoration: widget.mainButtonDecoration,
-                    width: 60,
-                    height: 60,
-                    child: !hasChildButtons
-                        ? widget.parentButton
-                        : AnimatedBuilder(
-                            animation: this._animationController,
-                            builder: (BuildContext context, Widget? child) {
-                              return Transform(
-                                transform: new Matrix4.rotationZ(
-                                    this._animationController.value * 0.8),
-                                alignment: FractionalOffset.center,
-                                child:
-                                    new Icon(this._animationController.isDismissed
-                                        ? widget.parentButton.icon
-                                        : widget.finalButtonIcon == null
-                                            ? Icons.close
-                                            : widget.finalButtonIcon!.icon),
-                              );
-                            }),
-                  )));
-        });
+      animation: this._parentController,
+      builder: (BuildContext context, Widget? child) {
+        return Transform(
+          transform: new Matrix4.diagonal3(vector.Vector3(
+              _parentController.value,
+              _parentController.value,
+              _parentController.value)),
+          alignment: FractionalOffset.center,
+          child: FloatingActionButton(
+            isExtended: false,
+            heroTag: widget.parentHeroTag,
+            backgroundColor: widget.parentButtonBackground,
+            onPressed: () {
+              mainActionButtonOnPressed();
+              if (widget.onMainButtonPressed != null) {
+                widget.onMainButtonPressed!();
+              }
+            },
+            child: Container(
+              decoration: widget.mainButtonDecoration,
+              width: 60,
+              height: 60,
+              child: !hasChildButtons
+                  ? widget.parentButton
+                  : AnimatedBuilder(
+                      animation: this._animationController,
+                      builder: (BuildContext context, Widget? child) {
+                        return Transform(
+                          transform: new Matrix4.rotationZ(
+                              this._animationController.value * 0.8),
+                          alignment: FractionalOffset.center,
+                          child: new Icon(this._animationController.isDismissed
+                              ? widget.parentButton.icon
+                              : widget.finalButtonIcon == null
+                                  ? Icons.close
+                                  : widget.finalButtonIcon!.icon),
+                        );
+                      },
+                    ),
+            ),
+          ),
+        );
+      },
+    );
 
     if (hasChildButtons) {
       var mainFloatingButton = AnimatedBuilder(
-          animation: this._animationController,
-          builder: (BuildContext context, Widget? child) {
-            return Transform.rotate(
-                angle: this._animationController.value * 0.8, child: mainFAB);
-          });
+        animation: this._animationController,
+        builder: (BuildContext context, Widget? child) {
+          return Transform.rotate(
+              angle: this._animationController.value * 0.8, child: mainFAB);
+        },
+      );
 
       var childButtonsList = widget.childButtons == null ||
               widget.childButtons!.length == 0
           ? []
-          : List.generate(widget.childButtons!.length, (index) {
-              var intervalValue = index == 0
-                  ? 0.9
-                  : ((widget.childButtons!.length - index) /
-                          widget.childButtons!.length) -
-                      0.2;
+          : List.generate(
+              widget.childButtons!.length,
+              (index) {
+                var intervalValue = index == 0
+                    ? 0.9
+                    : ((widget.childButtons!.length - index) /
+                            widget.childButtons!.length) -
+                        0.2;
 
-              intervalValue =
-                  intervalValue < 0.0 ? (1 / index) * 0.5 : intervalValue;
+                intervalValue =
+                    intervalValue < 0.0 ? (1 / index) * 0.5 : intervalValue;
 
-              var childFAB = FloatingActionButton(
+                var childFAB = FloatingActionButton(
                   onPressed: () {
                     if (widget.childButtons![index].currentButton.onPressed !=
                         null) {
@@ -239,79 +252,98 @@ class _UnicornDialer extends State<UnicornDialer>
                       .childButtons![index].currentButton.highlightElevation,
                   isExtended:
                       widget.childButtons![index].currentButton.isExtended,
-                  shape: widget.childButtons![index].currentButton.shape);
+                  shape: widget.childButtons![index].currentButton.shape,
+                );
 
-              return Positioned(
-                right: widget.orientation == UnicornOrientation.VERTICAL
-                    ? widget.childButtons![index].currentButton.mini
-                        ? 4.0
-                        : 0.0
-                    : ((widget.childButtons!.length - index) * 55.0) + 15,
-                bottom: widget.orientation == UnicornOrientation.VERTICAL
-                    ? ((widget.childButtons!.length - index) * 55.0) + 15
-                    : 8.0,
-                child: Row(children: [
-                  ScaleTransition(
-                      scale: CurvedAnimation(
-                        parent: this._animationController,
-                        curve:
-                            Interval(intervalValue, 1.0, curve: Curves.linear),
+                return Positioned(
+                  right: widget.orientation == UnicornOrientation.VERTICAL
+                      ? widget.childButtons![index].currentButton.mini
+                          ? 4.0
+                          : 0.0
+                      : ((widget.childButtons!.length - index) * 55.0) + 15,
+                  bottom: widget.orientation == UnicornOrientation.VERTICAL
+                      ? ((widget.childButtons!.length - index) * 55.0) + 15
+                      : 8.0,
+                  child: Row(
+                    children: [
+                      ScaleTransition(
+                        scale: CurvedAnimation(
+                          parent: this._animationController,
+                          curve: Interval(
+                            intervalValue,
+                            1.0,
+                            curve: Curves.linear,
+                          ),
+                        ),
+                        alignment: FractionalOffset.center,
+                        child: (!widget.childButtons![index].hasLabel) ||
+                                widget.orientation ==
+                                    UnicornOrientation.HORIZONTAL
+                            ? Container()
+                            : Container(
+                                padding:
+                                    EdgeInsets.only(right: widget.childPadding),
+                                child:
+                                    widget.childButtons![index].returnLabel(),
+                              ),
                       ),
-                      alignment: FractionalOffset.center,
-                      child: (!widget.childButtons![index].hasLabel) ||
-                              widget.orientation ==
-                                  UnicornOrientation.HORIZONTAL
-                          ? Container()
-                          : Container(
-                              padding:
-                                  EdgeInsets.only(right: widget.childPadding),
-                              child:
-                                  widget.childButtons![index].returnLabel())),
-                  ScaleTransition(
-                      scale: CurvedAnimation(
-                        parent: this._animationController,
-                        curve:
-                            Interval(intervalValue, 1.0, curve: Curves.linear),
-                      ),
-                      alignment: FractionalOffset.center,
-                      child: childFAB)
-                ]),
-              );
-            });
+                      ScaleTransition(
+                        scale: CurvedAnimation(
+                          parent: this._animationController,
+                          curve: Interval(
+                            intervalValue,
+                            1.0,
+                            curve: Curves.linear,
+                          ),
+                        ),
+                        alignment: FractionalOffset.center,
+                        child: childFAB,
+                      )
+                    ],
+                  ),
+                );
+              },
+            );
 
       var unicornDialWidget = Container(
-          margin: widget.hasNotch ? EdgeInsets.only(bottom: 15.0) : null,
-          height: double.infinity,
-          child: Stack(
-              //fit: StackFit.expand,
-              alignment: Alignment.bottomCenter,
-              clipBehavior: Clip.none,
-              children: List<Widget>.from(childButtonsList)
-                ..add(Positioned(
-                    right: null, bottom: null, child: mainFloatingButton))));
+        margin: widget.hasNotch ? EdgeInsets.only(bottom: 15.0) : null,
+        height: double.infinity,
+        child: Stack(
+          //fit: StackFit.expand,
+          alignment: Alignment.bottomCenter,
+          clipBehavior: Clip.none,
+          children: List<Widget>.from(childButtonsList)
+            ..add(
+              Positioned(right: null, bottom: null, child: mainFloatingButton),
+            ),
+        ),
+      );
 
       var modal = ScaleTransition(
-          scale: CurvedAnimation(
-            parent: this._animationController,
-            curve: Interval(1.0, 1.0, curve: Curves.linear),
+        scale: CurvedAnimation(
+          parent: this._animationController,
+          curve: Interval(1.0, 1.0, curve: Curves.linear),
+        ),
+        alignment: FractionalOffset.center,
+        child: GestureDetector(
+          onTap: mainActionButtonOnPressed,
+          child: Container(
+            color: widget.backgroundColor,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
           ),
-          alignment: FractionalOffset.center,
-          child: GestureDetector(
-              onTap: mainActionButtonOnPressed,
-              child: Container(
-                color: widget.backgroundColor,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-              )));
+        ),
+      );
 
       return widget.hasBackground
           ? Stack(
               alignment: Alignment.topCenter,
               clipBehavior: Clip.none,
               children: [
-                  Positioned(right: -16.0, bottom: -16.0, child: modal),
-                  unicornDialWidget
-                ])
+                Positioned(right: -16.0, bottom: -16.0, child: modal),
+                unicornDialWidget
+              ],
+            )
           : unicornDialWidget;
     }
 
