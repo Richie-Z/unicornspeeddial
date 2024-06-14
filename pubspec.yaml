@@ -17,4 +17,4 @@ flutter:
 
 environment:
   sdk: '>=2.12.0 <4.0.0'
-  flutter: ">=2.5."
+  flutter: ">=2.5.0"
