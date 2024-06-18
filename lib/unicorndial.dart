@@ -238,6 +238,7 @@ class _UnicornDialer extends State<UnicornDialer>
                     intervalValue < 0.0 ? (1 / index) * 0.5 : intervalValue;
 
                 late Widget childFAB;
+                Widget labelContainer = Container();
 
                 if (widget.childButtons![index] is UnicornButton) {
                   childFAB = FloatingActionButton(
@@ -266,6 +267,16 @@ class _UnicornDialer extends State<UnicornDialer>
                         widget.childButtons![index].currentButton.isExtended,
                     shape: widget.childButtons![index].currentButton.shape,
                   );
+
+                  labelContainer = widget.childButtons![index].hasLabel ||
+                          widget.orientation == UnicornOrientation.VERTICAL
+                      ? Container(
+                          padding: EdgeInsets.only(
+                            right: widget.childPadding,
+                          ),
+                          child: widget.childButtons![index].returnLabel(),
+                        )
+                      : Container();
                 } else {
                   childFAB = widget.childButtons![index];
                 }
@@ -289,18 +300,7 @@ class _UnicornDialer extends State<UnicornDialer>
                           ),
                         ),
                         alignment: FractionalOffset.center,
-                        child: (widget.childButtons![index] is! UnicornButton &&
-                                    !widget.childButtons![index].hasLabel) ||
-                                widget.orientation ==
-                                    UnicornOrientation.HORIZONTAL
-                            ? Container()
-                            : Container(
-                                padding: EdgeInsets.only(
-                                  right: widget.childPadding,
-                                ),
-                                child:
-                                    widget.childButtons![index].returnLabel(),
-                              ),
+                        child: labelContainer,
                       ),
                       ScaleTransition(
                         scale: CurvedAnimation(
