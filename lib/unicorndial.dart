@@ -7,7 +7,7 @@ class UnicornOrientation {
 }
 
 class UnicornButton extends StatelessWidget {
-  // Should Floating Action Button
+  final GlobalKey key;
   final Widget currentButton;
   final String? labelText;
   final double labelFontSize;
@@ -18,6 +18,7 @@ class UnicornButton extends StatelessWidget {
   final bool hasLabel;
 
   UnicornButton({
+    required this.key,
     required this.currentButton,
     this.labelText,
     this.labelFontSize = 14.0,
