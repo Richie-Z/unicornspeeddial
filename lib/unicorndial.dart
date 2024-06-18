@@ -68,6 +68,7 @@ class UnicornDialer extends StatefulWidget {
   final int orientation;
   final Icon parentButton;
   final Icon? finalButtonIcon;
+  final Color? buttonColor;
   final bool hasBackground;
   final Color? parentButtonBackground;
   final List<dynamic>? childButtons;
@@ -83,6 +84,7 @@ class UnicornDialer extends StatefulWidget {
   UnicornDialer({
     required this.parentButton,
     this.parentButtonBackground,
+    this.buttonColor,
     this.childButtons,
     this.onMainButtonPressed,
     this.orientation = 1,
@@ -201,6 +203,7 @@ class _UnicornDialer extends State<UnicornDialer>
                                 : widget.finalButtonIcon == null
                                     ? Icons.close
                                     : widget.finalButtonIcon!.icon,
+                            color: widget.buttonColor,
                           ),
                         );
                       },
