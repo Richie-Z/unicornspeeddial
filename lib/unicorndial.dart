@@ -7,8 +7,7 @@ class UnicornOrientation {
 }
 
 class UnicornButton extends StatelessWidget {
-  final GlobalKey key;
-  final Widget currentButton;
+  final FloatingActionButton currentButton;
   final String? labelText;
   final double labelFontSize;
   final Color? labelColor;
@@ -18,7 +17,6 @@ class UnicornButton extends StatelessWidget {
   final bool hasLabel;
 
   UnicornButton({
-    required this.key,
     required this.currentButton,
     this.labelText,
     this.labelFontSize = 14.0,
@@ -72,7 +70,7 @@ class UnicornDialer extends StatefulWidget {
   final Icon? finalButtonIcon;
   final bool hasBackground;
   final Color? parentButtonBackground;
-  final List<UnicornButton>? childButtons;
+  final List<dynamic>? childButtons;
   final int animationDuration;
   final int mainAnimationDuration;
   final double childPadding;
@@ -82,21 +80,22 @@ class UnicornDialer extends StatefulWidget {
   final bool hasNotch;
   final BoxDecoration mainButtonDecoration;
 
-  UnicornDialer(
-      {required this.parentButton,
-      this.parentButtonBackground,
-      this.childButtons,
-      this.onMainButtonPressed,
-      this.orientation = 1,
-      this.hasBackground = true,
-      this.backgroundColor = Colors.white30,
-      this.parentHeroTag = "parent",
-      this.finalButtonIcon,
-      this.animationDuration = 180,
-      this.mainAnimationDuration = 200,
-      this.childPadding = 4.0,
-      this.hasNotch = false,
-      this.mainButtonDecoration = const BoxDecoration()});
+  UnicornDialer({
+    required this.parentButton,
+    this.parentButtonBackground,
+    this.childButtons,
+    this.onMainButtonPressed,
+    this.orientation = 1,
+    this.hasBackground = true,
+    this.backgroundColor = Colors.white30,
+    this.parentHeroTag = "parent",
+    this.finalButtonIcon,
+    this.animationDuration = 180,
+    this.mainAnimationDuration = 200,
+    this.childPadding = 4.0,
+    this.hasNotch = false,
+    this.mainButtonDecoration = const BoxDecoration(),
+  });
 
   _UnicornDialer createState() => _UnicornDialer();
 }
@@ -238,25 +237,38 @@ class _UnicornDialer extends State<UnicornDialer>
                 intervalValue =
                     intervalValue < 0.0 ? (1 / index) * 0.5 : intervalValue;
 
-                GlobalKey currentKey =
-                    widget.childButtons![index].key as GlobalKey;
+                late Widget childFAB;
 
-                var childFAB = FloatingActionButton(
-                  onPressed: () {
-                    if (currentKey.currentState!.mounted) {
-                      (currentKey.currentState! as dynamic)
-                          .getCallbackFromProps();
-                    }
+                if (widget.childButtons![index] is UnicornButton) {
+                  childFAB = FloatingActionButton(
+                    onPressed: () {
+                      if (widget.childButtons![index].currentButton.onPressed !=
+                          null) {
+                        widget.childButtons![index].currentButton.onPressed!();
+                      }
 
-                    this._animationController.reverse();
-                  },
-                  key: currentKey,
-                  elevation: 0,
-                  child: currentKey.currentWidget!,
-                  backgroundColor: (currentKey.currentState! as dynamic)
-                      .widget
-                      .backgroundColor,
-                );
+                      this._animationController.reverse();
+                    },
+                    child: widget.childButtons![index].currentButton.child,
+                    heroTag: widget.childButtons![index].currentButton.heroTag,
+                    backgroundColor: widget
+                        .childButtons![index].currentButton.backgroundColor,
+                    mini: widget.childButtons![index].currentButton.mini,
+                    tooltip: widget.childButtons![index].currentButton.tooltip,
+                    key: widget.childButtons![index].currentButton.key,
+                    elevation:
+                        widget.childButtons![index].currentButton.elevation,
+                    foregroundColor: widget
+                        .childButtons![index].currentButton.foregroundColor,
+                    highlightElevation: widget
+                        .childButtons![index].currentButton.highlightElevation,
+                    isExtended:
+                        widget.childButtons![index].currentButton.isExtended,
+                    shape: widget.childButtons![index].currentButton.shape,
+                  );
+                } else {
+                  childFAB = widget.childButtons![index];
+                }
 
                 return Positioned(
                   right: widget.orientation == UnicornOrientation.VERTICAL
@@ -277,13 +289,15 @@ class _UnicornDialer extends State<UnicornDialer>
                           ),
                         ),
                         alignment: FractionalOffset.center,
-                        child: (!widget.childButtons![index].hasLabel) ||
+                        child: (widget.childButtons![index] is! UnicornButton &&
+                                    !widget.childButtons![index].hasLabel) ||
                                 widget.orientation ==
                                     UnicornOrientation.HORIZONTAL
                             ? Container()
                             : Container(
-                                padding:
-                                    EdgeInsets.only(right: widget.childPadding),
+                                padding: EdgeInsets.only(
+                                  right: widget.childPadding,
+                                ),
                                 child:
                                     widget.childButtons![index].returnLabel(),
                               ),
@@ -315,7 +329,11 @@ class _UnicornDialer extends State<UnicornDialer>
           clipBehavior: Clip.none,
           children: List<Widget>.from(childButtonsList)
             ..add(
-              Positioned(right: null, bottom: null, child: mainFloatingButton),
+              Positioned(
+                right: null,
+                bottom: null,
+                child: mainFloatingButton,
+              ),
             ),
         ),
       );
