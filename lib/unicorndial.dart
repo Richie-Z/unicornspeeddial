@@ -8,7 +8,7 @@ class UnicornOrientation {
 
 class UnicornButton extends StatelessWidget {
   // Should Floating Action Button
-  final dynamic currentButton;
+  final Widget currentButton;
   final String? labelText;
   final double labelFontSize;
   final Color? labelColor;
@@ -50,11 +50,12 @@ class UnicornButton extends StatelessWidget {
       child: Text(
         this.labelText!,
         style: TextStyle(
-            fontSize: this.labelFontSize,
-            fontWeight: FontWeight.bold,
-            color: this.labelColor == null
-                ? Color.fromRGBO(119, 119, 119, 1.0)
-                : this.labelColor),
+          fontSize: this.labelFontSize,
+          fontWeight: FontWeight.bold,
+          color: this.labelColor == null
+              ? Color.fromRGBO(119, 119, 119, 1.0)
+              : this.labelColor,
+        ),
       ),
     );
   }
@@ -162,10 +163,13 @@ class _UnicornDialer extends State<UnicornDialer>
       animation: this._parentController,
       builder: (BuildContext context, Widget? child) {
         return Transform(
-          transform: new Matrix4.diagonal3(vector.Vector3(
+          transform: new Matrix4.diagonal3(
+            vector.Vector3(
               _parentController.value,
               _parentController.value,
-              _parentController.value)),
+              _parentController.value,
+            ),
+          ),
           alignment: FractionalOffset.center,
           child: FloatingActionButton(
             isExtended: false,
@@ -188,13 +192,16 @@ class _UnicornDialer extends State<UnicornDialer>
                       builder: (BuildContext context, Widget? child) {
                         return Transform(
                           transform: new Matrix4.rotationZ(
-                              this._animationController.value * 0.8),
+                            this._animationController.value * 0.8,
+                          ),
                           alignment: FractionalOffset.center,
-                          child: new Icon(this._animationController.isDismissed
-                              ? widget.parentButton.icon
-                              : widget.finalButtonIcon == null
-                                  ? Icons.close
-                                  : widget.finalButtonIcon!.icon),
+                          child: new Icon(
+                            this._animationController.isDismissed
+                                ? widget.parentButton.icon
+                                : widget.finalButtonIcon == null
+                                    ? Icons.close
+                                    : widget.finalButtonIcon!.icon,
+                          ),
                         );
                       },
                     ),
@@ -209,7 +216,9 @@ class _UnicornDialer extends State<UnicornDialer>
         animation: this._animationController,
         builder: (BuildContext context, Widget? child) {
           return Transform.rotate(
-              angle: this._animationController.value * 0.8, child: mainFAB);
+            angle: this._animationController.value * 0.8,
+            child: mainFAB,
+          );
         },
       );
 
@@ -228,38 +237,29 @@ class _UnicornDialer extends State<UnicornDialer>
                 intervalValue =
                     intervalValue < 0.0 ? (1 / index) * 0.5 : intervalValue;
 
+                GlobalKey currentKey =
+                    widget.childButtons![index].key as GlobalKey;
+
                 var childFAB = FloatingActionButton(
                   onPressed: () {
-                    if (widget.childButtons![index].currentButton.onPressed !=
-                        null) {
-                      widget.childButtons![index].currentButton.onPressed!();
+                    if (currentKey.currentState!.mounted) {
+                      (currentKey.currentState! as dynamic)
+                          .getCallbackFromProps();
                     }
 
                     this._animationController.reverse();
                   },
-                  child: widget.childButtons![index].currentButton.child,
-                  heroTag: widget.childButtons![index].currentButton.heroTag,
-                  backgroundColor:
-                      widget.childButtons![index].currentButton.backgroundColor,
-                  mini: widget.childButtons![index].currentButton.mini,
-                  tooltip: widget.childButtons![index].currentButton.tooltip,
-                  key: widget.childButtons![index].currentButton.key,
-                  elevation:
-                      widget.childButtons![index].currentButton.elevation,
-                  foregroundColor:
-                      widget.childButtons![index].currentButton.foregroundColor,
-                  highlightElevation: widget
-                      .childButtons![index].currentButton.highlightElevation,
-                  isExtended:
-                      widget.childButtons![index].currentButton.isExtended,
-                  shape: widget.childButtons![index].currentButton.shape,
+                  key: currentKey,
+                  elevation: 0,
+                  child: currentKey.currentWidget!,
+                  backgroundColor: (currentKey.currentState! as dynamic)
+                      .widget
+                      .backgroundColor,
                 );
 
                 return Positioned(
                   right: widget.orientation == UnicornOrientation.VERTICAL
-                      ? widget.childButtons![index].currentButton.mini
-                          ? 4.0
-                          : 0.0
+                      ? 0
                       : ((widget.childButtons!.length - index) * 55.0) + 15,
                   bottom: widget.orientation == UnicornOrientation.VERTICAL
                       ? ((widget.childButtons!.length - index) * 55.0) + 15
